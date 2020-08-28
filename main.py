@@ -3,9 +3,8 @@
 #Past performance is not indicative of future results. 
 #Please DO NOT put any money into this strategy.
 
-#The alpaca paper trading mechanism in this script was copied from the Alpaca Sample Algo - 5 Minute EMA Crossover
-#and modified to use twitter sentiment analysis as a signal instead
-#The code for the 5 Minute EMA Crossover script by Sam Chakerian can be found here: https://gist.github.com/samchaaa/91dfe2bb3c030321536f9799bb369b26
+#The alpaca paper trading mechanism in this script was copied and modified from the Alpaca Sample Algo - 5 Minute EMA Crossover
+#The original code for the 5 Minute EMA Crossover script by Sam Chakerian can be found here: https://gist.github.com/samchaaa/91dfe2bb3c030321536f9799bb369b26
 
 #Import necessary packages
 import tweepy
