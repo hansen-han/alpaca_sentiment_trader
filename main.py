@@ -46,12 +46,12 @@ def get_sentiment(auth, tickers, date_since, include_retweets = False, num_tweet
 
   for ticker in tickers:
     
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+    
     #Convert ticker into hashtag to help find more relevant results
     #For example, if looking to analyze sentiment on the S&P500, #SPY will likely return more relevant tweets 
     # -as opposed to "SPY" which could return unrelated tweets related to anything from politics or maybe the latest James Bond movie.
-    stock = "#" + stock
-    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-    tweets = tweepy.Cursor(api.search, q=ticker, lang='en', since=date_since, tweet_mode='extended').items(num_tweets)
+    tweets = tweepy.Cursor(api.search, q=("#" + ticker), lang='en', since=date_since, tweet_mode='extended').items(num_tweets)
     
     #Keep or filter out tweets that are retweets
     if include_retweets == True:
