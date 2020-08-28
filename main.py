@@ -125,4 +125,4 @@ def vader_sentiment_trader(twitter_auth, tickers, buy_threshold = 0.05, num_twee
             time.sleep(time_to_open(datetime.datetime.now(tz)))
 
 #Run strategy on S&P500 ETF
-run_checker(twitter_auth, ['SPY'])
+vader_sentiment_trader(twitter_auth, ['SPY'])
