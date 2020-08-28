@@ -3,7 +3,8 @@
 #Past performance is not indicative of future results. 
 #Please DO NOT put any money into this strategy.
 
-#The alpaca paper trading mechanism in this script was copied from the Alpaca Sample Algo - 5 Minute EMA Crossover and modified to use twitter sentiment analysis as a signal instead
+#The alpaca paper trading mechanism in this script was copied from the Alpaca Sample Algo - 5 Minute EMA Crossover
+#and modified to use twitter sentiment analysis as a signal instead
 #The code for the 5 Minute EMA Crossover script by Sam Chakerian can be found here: https://gist.github.com/samchaaa/91dfe2bb3c030321536f9799bb369b26
 
 #Import necessary packages
@@ -38,11 +39,17 @@ alpaca_api = tradeapi.REST(alpaca_api_key, alpaca_api_secret, alpaca_endpoint)
 
 #Evaluate the sentiment of a given set of ticker symbols
 #The default number of tweets to analyze is set at 1000
-#When deciding the number of tweets to fetch for each call, consider reviewing the twitter API rate limits at https://developer.twitter.com/en/docs/twitter-api/rate-limits
+#When deciding the number of tweets to fetch for each call, consider reviewing the twitter API rate limits at 
+#https://developer.twitter.com/en/docs/twitter-api/rate-limits
+
 def get_sentiment(auth, tickers, date_since, include_retweets = False, num_tweets = 1000):
   sentiment_signals = {}
 
   for ticker in tickers:
+    
+    #Convert ticker into hashtag to help find more relevant results
+    #For example, if looking to analyze sentiment on the S&P500, #SPY will likely return more relevant tweets 
+    # -as opposed to "SPY" which could return unrelated tweets related to anything from politics or maybe the latest James Bond movie.
     stock = "#" + stock
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
     tweets = tweepy.Cursor(api.search, q=ticker, lang='en', since=date_since, tweet_mode='extended').items(num_tweets)
@@ -54,7 +61,11 @@ def get_sentiment(auth, tickers, date_since, include_retweets = False, num_tweet
       tweets = [tweet.full_text for tweet in tweets if tweet.full_text[0:2] != "RT"]
       
     analyzer = SentimentIntensityAnalyzer()
-    scores = [analyzer.polarity_scores(tweet)['compound'] for tweet in tweets] #extracts the compound sentiment score for each tweet (taking into account negative, positive, and neutral sentiment)
+    
+    #extracts the compound sentiment score for each tweet (taking into account negative, positive, and neutral sentiment)
+    scores = [analyzer.polarity_scores(tweet)['compound'] for tweet in tweets] 
+    
+    #saves the average sentiment for all the tweets 
     sentiment_signals[ticker] = round(sum(scores)/len(scores), 4)
 
   return sentiment_signals
@@ -70,7 +81,9 @@ def time_to_open(current_time):
     seconds = (next_day - current_time).total_seconds()
     return seconds
 
-#While the number of tweets used to evaluate sentiment is set at 500, please take into account twitter API rate limits at https://developer.twitter.com/en/docs/twitter-api/rate-limits
+#While the number of tweets used to evaluate sentiment is set at 500 please take into account twitter API rate limits at: 
+#https://developer.twitter.com/en/docs/twitter-api/rate-limits
+
 def vader_sentiment_trader(twitter_auth, tickers, buy_threshold = 0.05, num_tweets = 500):
     print('vader_sentiment_trader started')
     while True:
